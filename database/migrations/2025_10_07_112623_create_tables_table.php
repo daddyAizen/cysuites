@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->integer('seats')->default(4);
+            $table->enum('status', ['available', 'unavailable'])->default('available'); // table availability
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

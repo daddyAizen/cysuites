@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             RoomSeeder::class,
             GuestSeeder::class,
+            TableSeeder::class,
         ]);
 
         User::factory()->create([

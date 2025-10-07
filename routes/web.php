@@ -6,8 +6,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\MenuController;
-
-
+use App\Http\Controllers\TableController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -16,6 +15,12 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+    ]);
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('tables', TableController::class)->only([
+        'index', 'store', 'update', 'destroy'
     ]);
 });
 
