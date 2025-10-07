@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\MenuController;
+
 
 use Inertia\Inertia;
 
@@ -23,8 +25,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::resource('guests', GuestController::class)->only(['index', 'store']);
-Route::get('/rooms', action: [RoomController::class, 'index'])->name('rooms.index');
+Route::post('/guests/{id}/checkout', [GuestController::class, 'checkout'])->name('guests.checkout');
 
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+    Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+    Route::post('/rooms/toggle/{room}', [RoomController::class, 'toggle'])->name('rooms.toggle');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
+    Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
+    Route::post('/menu/{menu}', [MenuController::class, 'update'])->name('menu.update');
+    Route::post('/menu/{menu}/toggle-stock', [MenuController::class, 'toggleStock'])->name('menu.toggleStock');
+});
 
 
 Route::middleware([

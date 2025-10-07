@@ -1,29 +1,37 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
-import { Head, useForm } from '@inertiajs/vue3'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import AppLayout from "@/Layouts/AppLayout.vue";
+import { Head, useForm } from "@inertiajs/vue3";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Inertia } from "@inertiajs/inertia";
 
 const props = defineProps({
   guests: Array,
   rooms: Array,
-})
+});
 
 const form = useForm({
-  name: '',
-  email: '',
-  phone: '',
-  room_id: '',
-})
+  name: "",
+  email: "",
+  phone: "",
+  room_id: "",
+});
 
 const submit = () => {
-  form.post(route('guests.store'), {
+  form.post(route("guests.store"), {
     onSuccess: () => form.reset(),
-  })
-}
+  });
+};
+
+const checkoutGuest = (guestId) => {
+  Inertia.post(route("guests.checkout", guestId), {}, {
+    preserveScroll: true,
+  });
+};
 </script>
 
 <template>
@@ -31,7 +39,9 @@ const submit = () => {
     <Head title="Guest Management" />
 
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Guest Management</h2>
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
+        Guest Management
+      </h2>
     </template>
 
     <div class="py-8">
@@ -40,9 +50,7 @@ const submit = () => {
 
           <!-- Header Row -->
           <div class="flex justify-between items-center">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              Current Guests
-            </h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Guests</h3>
 
             <Dialog>
               <DialogTrigger as-child>
@@ -55,6 +63,7 @@ const submit = () => {
                 </DialogHeader>
 
                 <form @submit.prevent="submit" class="space-y-4 mt-4">
+
                   <div class="space-y-2">
                     <Label for="name">Name</Label>
                     <Input id="name" v-model="form.name" placeholder="Guest name" />
@@ -75,18 +84,30 @@ const submit = () => {
 
                   <div class="space-y-2">
                     <Label for="room_id">Select Room</Label>
-                    <select id="room_id" v-model="form.room_id" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value="" disabled>Select Room</option>
-                      <option v-for="room in rooms" :key="room.id" :value="room.id">{{ room.room_name }}</option>
-                    </select>
+                    <Select v-model="form.room_id" filterable>
+                      <SelectTrigger class="w-full">
+                        <SelectValue placeholder="Select Room" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem
+                          v-for="room in props.rooms"
+                          :key="room.id"
+                          :value="room.id"
+                        >
+                          {{ room.room_name }}
+
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <div v-if="form.errors.room_id" class="text-sm text-red-500">{{ form.errors.room_id }}</div>
                   </div>
 
                   <div class="flex justify-end pt-2">
                     <Button type="submit" :disabled="form.processing" class="w-full sm:w-auto">
-                      {{ form.processing ? 'Adding...' : 'Add Guest' }}
+                      {{ form.processing ? "Adding..." : "Add Guest" }}
                     </Button>
                   </div>
+
                 </form>
               </DialogContent>
             </Dialog>
@@ -103,30 +124,36 @@ const submit = () => {
                   <TableHead>Phone</TableHead>
                   <TableHead>Room</TableHead>
                   <TableHead>Room Code</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow
-                  v-for="(guest, index) in guests"
-                  :key="guest.id"
-                  class="hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
-                >
+                <TableRow v-for="(guest, index) in guests" :key="guest.id" class="hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors">
                   <TableCell>{{ index + 1 }}</TableCell>
                   <TableCell>{{ guest.name }}</TableCell>
                   <TableCell>{{ guest.email }}</TableCell>
                   <TableCell>{{ guest.phone }}</TableCell>
                   <TableCell>{{ guest.room?.room_name }}</TableCell>
                   <TableCell class="font-mono text-sm">{{ guest.room_code }}</TableCell>
+                  <TableCell>
+                    <Button
+                      class="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600 transition"
+                      @click.prevent="checkoutGuest(guest.id)"
+                    >
+                      Checkout
+                    </Button>
+                  </TableCell>
                 </TableRow>
 
                 <TableRow v-if="guests.length === 0">
-                  <TableCell colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-400">
+                  <TableCell colspan="7" class="text-center py-6 text-gray-500 dark:text-gray-400">
                     No guests found.
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </div>
+
         </div>
       </div>
     </div>

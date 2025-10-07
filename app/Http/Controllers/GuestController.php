@@ -29,15 +29,26 @@ class GuestController extends Controller
             'room_id'   => 'required|exists:rooms,id',
         ]);
 
-        // Assign the room code from the selected room
         $room = Room::findOrFail($validated['room_id']);
         $validated['room_code'] = $room->room_code;
 
         Guest::create($validated);
 
-        // Mark room as booked
         $room->update(['is_booked' => true]);
 
         return redirect()->back()->with('success', 'Guest added successfully.');
     }
+    public function checkout($id)
+{
+    $guest = Guest::findOrFail($id);
+
+    $room = $guest->room;
+    $room->is_booked = 0;
+    $room->save();
+
+    $guest->delete();
+
+    return redirect()->back()->with('success', 'Guest checked out, room is now available.');
+}
+
 }
