@@ -10,19 +10,19 @@ class RoomSeeder extends Seeder
     public function run(): void
     {
         Room::create([
-            'name' => 'Room A1',
+            'room_name' => 'Room A1',
             'room_code' => 'A1X12',
             'is_booked' => false,
         ]);
 
         Room::create([
-            'name' => 'Room B2',
+            'room_name' => 'Room B2',
             'room_code' => 'B2Y34',
             'is_booked' => false,
         ]);
 
         Room::create([
-            'name' => 'Room C3',
+            'room_name' => 'Room C3',
             'room_code' => 'C3Z56',
             'is_booked' => true,
         ]);

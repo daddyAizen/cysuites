@@ -77,7 +77,7 @@ const submit = () => {
                     <Label for="room_id">Select Room</Label>
                     <select id="room_id" v-model="form.room_id" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                       <option value="" disabled>Select Room</option>
-                      <option v-for="room in rooms" :key="room.id" :value="room.id">{{ room.name }}</option>
+                      <option v-for="room in rooms" :key="room.id" :value="room.id">{{ room.room_name }}</option>
                     </select>
                     <div v-if="form.errors.room_id" class="text-sm text-red-500">{{ form.errors.room_id }}</div>
                   </div>
@@ -115,7 +115,7 @@ const submit = () => {
                   <TableCell>{{ guest.name }}</TableCell>
                   <TableCell>{{ guest.email }}</TableCell>
                   <TableCell>{{ guest.phone }}</TableCell>
-                  <TableCell>{{ guest.room?.name }}</TableCell>
+                  <TableCell>{{ guest.room?.room_name }}</TableCell>
                   <TableCell class="font-mono text-sm">{{ guest.room_code }}</TableCell>
                 </TableRow>
 

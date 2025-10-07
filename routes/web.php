@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\RoomController;
+
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -21,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::resource('guests', GuestController::class)->only(['index', 'store']);
+Route::get('/rooms', action: [RoomController::class, 'index'])->name('rooms.index');
 
 
 

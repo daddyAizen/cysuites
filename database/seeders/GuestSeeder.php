@@ -10,7 +10,7 @@ class GuestSeeder extends Seeder
 {
     public function run(): void
     {
-        $room = Room::where('name', 'Room C3')->first();
+        $room = Room::where('room_name', 'Room C3')->first();
 
         if ($room) {
             Guest::create([
