@@ -52,21 +52,9 @@ const logout = () => {
                                     Dashboard
                                 </NavLink>
                                 <NavLink :href="route('staff.index')" :active="route().current('staff')">
-                                    Staff
+                                    Food
                                 </NavLink>
                                 <NavLink :href="route('guests.index')" :active="route().current('guests')">
-                                    Guests
-                                </NavLink>
-                                 <NavLink :href="route('rooms.index')" :active="route().current('rooms')">
-                                    Rooms
-                                </NavLink>
-                                <NavLink :href="route('menu.index')" :active="route().current('menu')">
-                                    Menu
-                                </NavLink>
-                                <NavLink :href="route('tables.index')" :active="route().current('tables')">
-                                    Tables
-                                </NavLink>
-                                <NavLink :href="route('reservations.index')" :active="route().current('reservations')">
                                     Reservations
                                 </NavLink>
                             </div>

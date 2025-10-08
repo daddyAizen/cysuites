@@ -3,34 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
+use App\Models\Table;
+use App\Models\Guest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ReservationController extends Controller
 {
-    // Show all reservations
     public function index()
     {
         $reservations = Reservation::with(['guest', 'table'])->latest()->get();
-        return Inertia::render('Reservations/Index', compact('reservations'));
+        $tables = Table::all();
+        $guests = Guest::all();
+
+        return Inertia::render('Reservations/Index', [
+            'reservations' => $reservations,
+            'tables' => $tables,
+            'guests' => $guests,
+        ]);
     }
 
-    // Store new reservation
     public function store(Request $request)
     {
         $data = $request->validate([
-            'guest_id' => 'required|exists:guests,id', // linked to guests
+            'guest_id' => 'required|exists:guests,id',
             'table_id' => 'required|exists:tables,id',
             'reservation_date' => 'required|date',
             'reservation_time' => 'required',
         ]);
 
-        Reservation::create($data);
+        // When creating a reservation, table is assumed available
+        $reservation = Reservation::create($data);
 
         return redirect()->back()->with('success', 'Reservation created successfully.');
     }
 
-    // Update reservation
     public function update(Request $request, Reservation $reservation)
     {
         $data = $request->validate([
@@ -42,13 +49,31 @@ class ReservationController extends Controller
 
         $reservation->update($data);
 
+        // Handle table availability based on reservation status
+        $table = Table::find($reservation->table_id);
+        if ($data['status'] === 'confirmed') {
+            $table->is_available = false; // mark table as unavailable
+        } elseif (in_array($data['status'], ['cancelled', 'completed'])) {
+            $table->is_available = true; // make table available again
+        }
+        $table->save();
+
         return redirect()->back()->with('success', 'Reservation updated successfully.');
     }
 
-    // Delete reservation
     public function destroy(Reservation $reservation)
     {
+        // Make table available again if reservation was confirmed
+        if ($reservation->status === 'confirmed') {
+            $table = Table::find($reservation->table_id);
+            if ($table) {
+                $table->is_available = true;
+                $table->save();
+            }
+        }
+
         $reservation->delete();
+
         return redirect()->back()->with('success', 'Reservation deleted successfully.');
     }
 }
