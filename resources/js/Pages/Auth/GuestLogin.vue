@@ -17,7 +17,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(route('guest.login'), {
+  form.post(route('guests.login'), {
     onFinish: () => form.reset('room_code'),
   })
 }

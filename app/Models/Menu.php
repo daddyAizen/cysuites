@@ -19,11 +19,15 @@ class Menu extends Model
         'is_out_of_stock',
     ];
 
-    protected $appends = ['picture_url']; 
+    protected $appends = ['picture_url'];
 
     public function getPictureUrlAttribute()
     {
         return $this->picture ? asset('storage/' . $this->picture) : null;
+    }
+     public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }
 

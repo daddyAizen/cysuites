@@ -41,7 +41,7 @@ class GuestAuthController extends Controller
 
     Auth::guard('guest')->login($guest);
 
-    return redirect()->route('guest.dashboard');
+    return redirect()->route('guests.dashboard');
 }
 
     public function logout(Request $request)
@@ -50,6 +50,6 @@ class GuestAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('guest.login.form');
+        return redirect()->route('guests.login.form');
     }
 }

@@ -26,13 +26,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
 });
 
-
-
-Route::get('/guest/login', [GuestAuthController::class, 'showLoginForm'])->name('guest.login.form');
-Route::post('/guest/login', [GuestAuthController::class, 'login'])->name('guest.login');
-Route::get('guest/dashboard', function () {
+Route::get('/guests/login', [GuestAuthController::class, 'showLoginForm'])->name('guest.login.form');
+Route::post('/guests/login', [GuestAuthController::class, 'login'])->name('guests.login');
+Route::get('guests/dashboard', function () {
     return Inertia::render('Guests/Dashboard');
-})->middleware('auth:guest')->name('guest.dashboard');
+})->middleware('auth:guest')->name('guests.dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');

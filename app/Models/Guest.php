@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 
 class Guest extends Authenticatable
 {
@@ -24,9 +23,14 @@ class Guest extends Authenticatable
     {
         return $this->belongsTo(Room::class);
     }
-    public function reservations()
-{
-    return $this->hasMany(Reservation::class);
-}
 
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

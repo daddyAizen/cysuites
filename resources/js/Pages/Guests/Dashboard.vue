@@ -68,7 +68,9 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                                         <p
                                             class="mt-1 text-sm text-gray-500 dark:text-neutral-500"
                                         >
-                                            Order
+                                            Order food straight to your room
+                                            from our diverse menu, featuring
+                                            local and international cuisines.
                                         </p>
                                     </div>
                                 </div>
