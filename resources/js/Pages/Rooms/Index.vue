@@ -166,7 +166,7 @@ const submit = () => {
                                     {{
                                         room.is_booked
                                             ? "Unavailable"
-                                            : "Book Now"
+                                            : ""
                                     }}
                                 </Button>
 
