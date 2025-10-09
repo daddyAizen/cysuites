@@ -111,12 +111,7 @@ const remove = (tableId) => {
           </CardHeader>
 
           <CardContent class="p-4 flex-1 flex flex-col justify-between">
-            <div>
-              <p class="text-gray-700 dark:text-gray-400">
-                <!-- Optional: Show current reservations or status -->
-                Reserved: {{ table.reservations_count || 0 }}
-              </p>
-            </div>
+      
 
             <div class="flex flex-col sm:flex-row gap-2 mt-4">
               <Button size="sm" variant="secondary" class="flex-1" @click="startEdit(table)">

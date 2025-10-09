@@ -31,13 +31,11 @@ class OrderController extends Controller
 
         $guest = auth('guest')->user();
 
-        // Create the main order
         $order = Order::create([
             'guest_id' => $guest->id,
             'status' => 'pending',
         ]);
 
-        // Attach order items
         foreach ($request->orders as $item) {
             $order->orderItems()->create([
                 'menu_id' => $item['menu_id'],
@@ -73,5 +71,25 @@ class OrderController extends Controller
         $order->delete();
 
         return redirect()->back()->with('success', 'Order deleted successfully!');
+    }
+
+// In OrderController
+public function allOrders()
+{
+    $orders = Order::with(['guest.room', 'orderItems.menu'])->latest()->get();
+
+    return Inertia::render('Orders/Index', [
+        'orders' => $orders,
+    ]);
+}
+
+
+    public function approveOrder(Order $order)
+    {
+        $order->update([
+            'status' => 'approved',
+        ]);
+
+        return response()->json(['success' => true, 'order' => $order]);
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <GuestLayout>
         <div class="max-w-6xl mx-auto py-10 px-4">
-        
+
 
             <div v-if="orders.length" class="space-y-6">
                 <div
@@ -38,7 +38,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="flex justify-end mt-4">
+                    <div v-if="order.status === 'pending'" class="flex justify-end mt-4">
                         <button
                             @click="cancelOrder(order.id)"
                             class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
@@ -60,15 +60,17 @@
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { usePage } from "@inertiajs/vue3";
 import { router } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 const page = usePage();
-const orders = page.props.orders || [];
+const orders = ref([...page.props.orders])
 
 const cancelOrder = (orderId) => {
   if (!confirm('Are you sure you want to cancel this order?')) return;
 
   router.post(route('guests.orders.cancel', orderId), {
     onSuccess: () => {
+      orders.value = orders.value.filter(order => order.id !== orderId)
       alert('Order deleted successfully!')
     }
   })

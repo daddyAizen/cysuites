@@ -38,13 +38,15 @@ Route::prefix('guests')->group(function () {
             return Inertia::render('Guests/Dashboard');
         })->name('guests.dashboard');
 
-        // Guest menu and orders
         Route::get('/menu', [OrderController::class, 'index'])->name('guests.menu');
         Route::post('/orders', [OrderController::class, 'store'])->name('guests.orders.store');
         Route::get('/orders', [OrderController::class, 'guestOrders'])->name('guests.orders');
         Route::post('/guests/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('guests.orders.cancel');
 
-        // Guest checkout (if needed)
+        Route::get('/reservations', [ReservationController::class, 'guestView'])->name('guests.reservations');
+        Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+        Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+
         Route::post('/{id}/checkout', [GuestController::class, 'checkout'])->name('guests.checkout');
     });
 });
@@ -78,8 +80,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reservations
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
-    Route::post('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
-    Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+    Route::post('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
+    Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'destroy'])->name('reservations.cancel');
 
     // Menu management
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
@@ -89,4 +91,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Guests management
     Route::resource('guests', GuestController::class)->only(['index', 'store']);
+});
+
+// Staff order management
+Route::middleware(['auth', 'verified'])->group(function () {
+    // View all orders
+    Route::get('/orders', [OrderController::class, 'allOrders'])->name('orders.index');
+
+    // Approve an order
+    Route::post('/orders/{order}/approve', [OrderController::class, 'approveOrder'])->name('orders.approve');
+
+    // Cancel/delete an order
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 });

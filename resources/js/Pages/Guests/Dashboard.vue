@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import NavLink from "@/Components/NavLink.vue";
 </script>
 
 <template>
@@ -43,9 +44,8 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                 <div class="lg:col-span-2">
                     <div class="grid sm:grid-cols-2 gap-8 md:gap-12">
                         <!-- Card -->
-                        <a
+                        <NavLink :href="route('guests.menu')"
                             class="block border border-gray-200 rounded-lg hover:shadow-2xs focus:outline-hidden dark:border-neutral-700"
-                            href="#"
                         >
                             <div
                                 class="relative flex items-center overflow-hidden"
@@ -55,8 +55,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                                     src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGZvb2R8ZW58MHx8MHx8fDA%3D"
                                     alt="Blog Image"
                                 />
-
-                                <div class="grow p-4 ms-32 sm:ms-48">
+                                 <div class="grow p-4 ms-32 sm:ms-48">
                                     <div
                                         class="min-h-24 flex flex-col justify-center"
                                     >
@@ -75,13 +74,12 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </Navlink>
                         <!-- End Card -->
 
                         <!-- Card -->
-                        <a
+                        <NavLink :href="route('guests.reservations')"
                             class="block border border-gray-200 rounded-lg hover:shadow-2xs focus:outline-hidden dark:border-neutral-700"
-                            href="#"
                         >
                             <div
                                 class="relative flex items-center overflow-hidden"
@@ -111,15 +109,10 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                                     </div>
                                 </div>
                             </div>
-                        </a>
-
-
+                        </Navlink>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </GuestLayout>
-
 </template>

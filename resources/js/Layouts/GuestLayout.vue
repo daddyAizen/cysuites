@@ -2,10 +2,12 @@
 import { ref } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
+import NavLink from '@/Components/NavLink.vue';
+
 
 defineProps({
     title: String,
-    guest: Object, // we'll pass guest from controller
+    guest: Object,
 });
 
 const showingNavigationDropdown = ref(false);
@@ -30,6 +32,31 @@ const logout = () => {
                             <span class="font-semibold text-lg text-gray-700">
                                 Guest Portal
                             </span>
+                           <div class="flex">
+                            <!-- Logo -->
+                            <div class="shrink-0 flex items-center">
+                                <Link :href="route('dashboard')">
+                                    <ApplicationMark class="block h-9 w-auto" />
+                                </Link>
+                            </div>
+
+                            <!-- Navigation Links -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('guests.dashboard')" :active="route().current('guests.dashboard')">
+                                    Dashboard
+                                </NavLink>
+                                <NavLink :href="route('guests.menu')" :active="route().current('guests.menu')">
+                                    Menus
+                                </NavLink>
+                                <NavLink :href="route('guests.orders')" :active="route().current('guests.orders')">
+                                    Orders
+                                </NavLink>
+                                 <NavLink :href="route('guests.reservations')" :active="route().current('guests.reservations')">
+                                    Reservations
+                                </NavLink>
+
+                            </div>
+                        </div>
                         </div>
 
                         <!-- Guest Info + Logout -->
