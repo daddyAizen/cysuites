@@ -3,8 +3,8 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, router } from "@inertiajs/vue3";
 import { ref, onMounted, watch } from "vue";
 import { Chart, registerables } from "chart.js";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Card } from "@/Components/ui/card";
 
 Chart.register(...registerables);
 

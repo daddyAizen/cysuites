@@ -4,10 +4,8 @@
       <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">
         Staff Menu
         <p>Discount: {{ user?.discount?.percentage ?? 0 }}%</p>
-
       </h2>
 
-      <!-- Menu Grid -->
       <div
         v-if="menus.length"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -170,6 +168,16 @@
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <!-- Toast Notification -->
+      <transition name="fade">
+        <div
+          v-if="toastMessage"
+          class="fixed bottom-10 right-10 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium"
+        >
+          {{ toastMessage }}
+        </div>
+      </transition>
     </div>
   </AppLayout>
 </template>
@@ -177,7 +185,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   Dialog,
   DialogContent,
@@ -193,6 +201,7 @@ const user = page.props.auth.user || {}
 const quantities = ref({})
 const isSubmitting = ref(false)
 const isCheckoutOpen = ref(false)
+const toastMessage = ref('')
 
 const form = useForm({ orders: [], total: 0 })
 
@@ -233,6 +242,11 @@ const totalAmount = computed(() =>
 
 const discountSaved = computed(() => subtotal.value - totalAmount.value)
 
+const showToast = (message) => {
+  toastMessage.value = message
+  setTimeout(() => (toastMessage.value = ''), 3000)
+}
+
 const submitOrder = () => {
   const ordersToSubmit = Object.entries(quantities.value)
     .filter(([_, qty]) => qty > 0)
@@ -257,7 +271,22 @@ const submitOrder = () => {
     onSuccess: () => {
       quantities.value = {}
       isCheckoutOpen.value = false
+      showToast('✅ Order placed successfully!')
+    },
+    onError: () => {
+      showToast('❌ Failed to place order. Try again.')
     },
   })
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

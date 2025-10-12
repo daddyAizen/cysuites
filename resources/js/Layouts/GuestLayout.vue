@@ -31,7 +31,7 @@ const logout = () => {
                             <ApplicationMark class="block h-8 w-auto" />
                             <span class="font-semibold text-lg text-gray-700">
                                 <!-- {{ guest.name }} -->
-                                <p>hhgfjhhhjh {{ guest }}</p>
+                                <p> {{ guest }}</p>
                             </span>
                            <div class="flex">
                             <!-- Logo -->

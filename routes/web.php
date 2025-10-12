@@ -14,6 +14,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\PromotionController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -39,7 +42,7 @@ Route::prefix('guests')->group(function () {
             return Inertia::render('Guests/Dashboard');
         })->name('guests.dashboard');
 
-        Route::get('/menu', [OrderController::class, 'index'])->name('guests.menu');
+        Route::get('/guest-menu', [OrderController::class, 'guestMenu'])->name('guests.menu');
         Route::post('/orders', [OrderController::class, 'store'])->name('guests.orders.store');
         Route::get('/orders', [OrderController::class, 'guestOrders'])->name('guests.orders');
         Route::post('/guests/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('guests.orders.cancel');
@@ -64,10 +67,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
     Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
-
     Route::get('/staff/menu', [MenuController::class, 'staffMenu'])->name('menu.staff');
 
-
+Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
+    Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
 
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');

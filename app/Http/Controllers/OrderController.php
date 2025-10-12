@@ -6,7 +6,9 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use App\Models\Discount;
 use Inertia\Inertia;
+use App\Notifications\OrderStatusUpdated;
 
 class OrderController extends Controller
 {
@@ -21,35 +23,83 @@ class OrderController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function guestMenu()
     {
-        $userId = auth()->check() ? auth()->id() : null;
-        $guestId = auth('guest')->check() ? auth('guest')->id() : null;
+        $guest = auth('guest')->user();
 
-        $order = Order::create([
-            'guest_id' => $guestId ?? $request->guest_id ?? null,
-            'user_id' => $userId ?? $request->user_id ?? null,
-            'status' => 'pending',
-            'total' => 0, // initial total, will recalc when items are added
-        ]);
-
-        // If there are any items sent along with creation, add them and recalc total
-        if ($request->has('items') && is_array($request->items)) {
-            foreach ($request->items as $itemData) {
-                $menu = Menu::find($itemData['menu_id'] ?? 0);
-                if ($menu) {
-                    $order->orderItems()->create([
-                        'menu_id' => $menu->id,
-                        'quantity' => $itemData['quantity'] ?? 1,
-                    ]);
-                }
-            }
-
-            $order->updateTotal();
+        if (!$guest) {
+            return redirect()->route('guests.login');
         }
 
-        return redirect()->back()->with('success', 'Order created successfully.');
+        $menus = Menu::all();
+
+        return Inertia::render('Guests/Menu', [
+            'guest' => $guest,
+            'menus' => $menus,
+        ]);
     }
+
+public function store(Request $request)
+{
+    $user = auth()->user();
+    $guest = auth('guest')->user();
+
+    $userId = $user ? $user->id : null;
+    $guestId = $guest ? $guest->id : null;
+
+    // Validate request structure
+    $validated = $request->validate([
+        'orders' => 'required|array|min:1',
+        'orders.*.menu_id' => 'required|exists:menus,id',
+        'orders.*.quantity' => 'required|integer|min:1',
+    ]);
+
+    // Create the order
+    $order = Order::create([
+        'guest_id' => $guestId,
+        'user_id' => $guestId ? null : $userId,
+        'status' => 'pending',
+        'total' => 0,
+    ]);
+
+    $total = 0;
+
+    // Calculate total and attach items
+    foreach ($validated['orders'] as $item) {
+        $menu = Menu::find($item['menu_id']);
+        if ($menu) {
+            $subtotal = $menu->price * $item['quantity'];
+            $total += $subtotal;
+
+            $order->orderItems()->create([
+                'menu_id' => $menu->id,
+                'quantity' => $item['quantity'],
+            ]);
+        }
+    }
+
+    // Apply discount only if user has one
+    $discountAmount = 0;
+    if ($user && $user->discount) {
+        $discount = $user->discount->percentage;
+        $discountAmount = ($discount / 100) * $total;
+        $total -= $discountAmount;
+    }
+
+    $order->update(['total' => $total]);
+
+    // Notify user or guest
+    if ($order->user) {
+        $order->user->notify(new OrderStatusUpdated($order, 'none', 'pending'));
+    } elseif ($order->guest) {
+        $order->guest->notify(new OrderStatusUpdated($order, 'none', 'pending'));
+    }
+
+    // Return a response Inertia can handle for your alert
+    return back()->with('success', '✅ Order placed successfully!');
+}
+
+
 
     public function guestOrders()
     {
@@ -73,6 +123,7 @@ class OrderController extends Controller
         if ($order->guest_id !== $guest->id) {
             abort(403, 'You cannot delete this order.');
         }
+
         $order->delete();
 
         return redirect()->back()->with('success', 'Order deleted successfully!');
@@ -86,7 +137,7 @@ class OrderController extends Controller
         ]);
 
         $menu = Menu::find($validated['menu_id']);
-        if (! $menu) {
+        if (!$menu) {
             return redirect()->back()->with('error', 'Menu item not found.');
         }
 
@@ -107,6 +158,8 @@ class OrderController extends Controller
 
     public function updateStatus(Order $order)
     {
+        $oldStatus = $order->status;
+
         switch ($order->status) {
             case 'pending':
                 $order->status = 'approved';
@@ -120,6 +173,12 @@ class OrderController extends Controller
 
         $order->save();
 
-        return redirect()->back()->with('success', "Order status updated to {$order->status}.");
+        if ($order->user) {
+            $order->user->notify(new OrderStatusUpdated($order, $oldStatus, $order->status));
+        } elseif ($order->guest) {
+            $order->guest->notify(new OrderStatusUpdated($order, $oldStatus, $order->status));
+        }
+
+        return redirect()->back()->with('success', "Order status updated to {$order->status}, and email sent.");
     }
 }

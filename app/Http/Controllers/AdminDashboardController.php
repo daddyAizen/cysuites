@@ -14,9 +14,8 @@ class AdminDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $filter = $request->input('filter', '7days'); // default filter
+        $filter = $request->input('filter', '7days'); 
 
-        // Pending Orders count
         $pendingOrdersQuery = Order::where('status', 'pending');
         $totalOrdersQuery = Order::query();
 
@@ -31,11 +30,9 @@ class AdminDashboardController extends Controller
         $pendingOrders = $pendingOrdersQuery->count();
         $totalOrders = $totalOrdersQuery->count();
 
-        // Total Guests and Menu Items (always total)
         $totalGuests = Guest::count();
         $totalMenuItems = Menu::count();
 
-        // Orders Over Time (for line chart)
         $ordersOverTimeQuery = Order::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('COUNT(*) as count')
@@ -52,7 +49,6 @@ class AdminDashboardController extends Controller
             ->orderBy('date')
             ->get();
 
-        // Top Selling Items (bar chart)
         $topSellingQuery = DB::table('order_items')
             ->join('menus', 'order_items.menu_id', '=', 'menus.id')
             ->select('menus.name', DB::raw('SUM(order_items.quantity) as quantity'));
