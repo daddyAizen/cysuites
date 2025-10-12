@@ -1,33 +1,31 @@
 <template>
   <AppLayout>
     <div class="max-w-6xl mx-auto py-10 px-4">
-      <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">
+      <h2 class="text-3xl font-bold mb-4 text-center text-gray-800">
         Staff Menu
-        <p>Discount: {{ user?.discount?.percentage ?? 0 }}%</p>
+        <p class="text-sm font-medium text-gray-600">
+          Discount: 35%
+        </p>
       </h2>
 
-      <div
-        v-if="menus.length"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-      >
+      <!-- Menu Grid -->
+      <div v-if="menus.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <div
           v-for="menu in menus"
           :key="menu.id"
           class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition relative"
         >
-          <div class="relative">
-            <img
-              v-if="menu.picture"
-              :src="`/storage/${menu.picture}`"
-              alt="Food Image"
-              class="h-44 w-full object-cover"
-            />
-            <span
-              class="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full"
-            >
-              KES {{ discountedPrice(menu.price) }}
-            </span>
-          </div>
+          <img
+            v-if="menu.picture"
+            :src="`/storage/${menu.picture}`"
+            alt="Food Image"
+            class="h-44 w-full object-cover"
+          />
+          <span
+            class="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full"
+          >
+            KES {{ discountedPrice(menu.price) }}
+          </span>
 
           <div class="p-4 flex flex-col justify-between">
             <div>
@@ -37,11 +35,8 @@
               <p class="text-sm text-gray-600 mb-3 line-clamp-2">
                 {{ menu.description }}
               </p>
-              <p
-                v-if="user.discount"
-                class="text-xs text-green-700 font-medium italic"
-              >
-                {{ user.discount.name }} ({{ user.discount.percentage }}% off)
+              <p class="text-xs text-green-700 font-medium italic">
+                35% off
               </p>
             </div>
 
@@ -53,9 +48,7 @@
                 >
                   −
                 </button>
-                <span
-                  class="text-lg font-medium text-gray-800 w-6 text-center"
-                >
+                <span class="text-lg font-medium text-gray-800 w-6 text-center">
                   {{ quantities[menu.id] || 0 }}
                 </span>
                 <button
@@ -71,7 +64,7 @@
       </div>
 
       <div v-else class="text-center text-gray-500 text-lg mt-10">
-        No menu items available right now.
+        No menu items available.
       </div>
 
       <!-- Floating Cart -->
@@ -84,9 +77,7 @@
           <span class="font-semibold mr-3">
             🛒 {{ cartItemCount }} item{{ cartItemCount > 1 ? 's' : '' }}
           </span>
-          <button
-            class="bg-white text-green-700 font-bold px-4 py-1 rounded-full"
-          >
+          <button class="bg-white text-green-700 font-bold px-4 py-1 rounded-full">
             Checkout
           </button>
         </div>
@@ -116,27 +107,22 @@
                 <p class="font-medium text-gray-800">{{ menu.name }}</p>
                 <p class="text-sm text-gray-600">
                   {{ quantities[menu.id] }} ×
-                  <span
-                    class="line-through text-gray-400"
-                    v-if="user.discount"
-                    >KES {{ menu.price }}</span
-                  >
-                  <span class="ml-1 text-green-700 font-semibold"
-                    >KES {{ discountedPrice(menu.price) }}</span
-                  >
+                  <span class="line-through text-gray-400">
+                    KES {{ menu.price }}
+                  </span>
+                  <span class="ml-1 text-green-700 font-semibold">
+                    KES {{ discountedPrice(menu.price) }}
+                  </span>
                 </p>
               </div>
               <p class="font-semibold text-gray-700">
-                KES
-                {{
-                  discountedPrice(menu.price) * quantities[menu.id]
-                }}
+                KES {{ discountedPrice(menu.price) * quantities[menu.id] }}
               </p>
             </div>
 
-            <div v-if="user.discount" class="pt-3 border-t mt-3">
+            <div class="pt-3 border-t mt-3">
               <p class="text-sm text-green-700 font-medium">
-                Discount ({{ user.discount.percentage }}% Off)
+                Discount (35% Off)
               </p>
               <p class="text-xs text-gray-600">
                 You saved KES {{ discountSaved }}
@@ -145,9 +131,9 @@
 
             <div class="flex justify-between items-center pt-3 border-t mt-3">
               <span class="font-semibold text-gray-800 text-lg">Total:</span>
-              <span class="font-bold text-green-700 text-xl"
-                >KES {{ totalAmount }}</span
-              >
+              <span class="font-bold text-green-700 text-xl">
+                KES {{ totalAmount }}
+              </span>
             </div>
           </div>
 
@@ -163,7 +149,7 @@
               :disabled="isSubmitting"
               class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold"
             >
-              {{ isSubmitting ? "Placing..." : "Confirm Order" }}
+              {{ isSubmitting ? 'Placing...' : 'Confirm Order' }}
             </button>
           </DialogFooter>
         </DialogContent>
@@ -185,7 +171,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import {
   Dialog,
   DialogContent,
@@ -194,71 +180,35 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 
+const DISCOUNT_PERCENTAGE = 35
+
 const page = usePage()
 const menus = page.props.menus || []
-const user = page.props.auth.user || {}
 
 const quantities = ref({})
 const isSubmitting = ref(false)
 const isCheckoutOpen = ref(false)
 const toastMessage = ref('')
 
-const form = useForm({ orders: [], total: 0 })
+const selectedMenus = computed(() => menus.filter(m => quantities.value[m.id] > 0))
+const cartItemCount = computed(() => Object.values(quantities.value).reduce((sum, q) => sum + q, 0))
 
-const increment = (id) => (quantities.value[id] = (quantities.value[id] || 0) + 1)
-const decrement = (id) => {
-  if (quantities.value[id] > 0) quantities.value[id] -= 1
-}
+const discountedPrice = (price) => Math.round(price - (price * DISCOUNT_PERCENTAGE) / 100)
 
-const cartItemCount = computed(() =>
-  Object.values(quantities.value).reduce((sum, q) => sum + q, 0)
-)
-
-const selectedMenus = computed(() =>
-  menus.filter((menu) => quantities.value[menu.id] > 0)
-)
-
-const discountedPrice = (price) => {
-  if (user.discount && user.discount.percentage) {
-    return Math.round(price - (price * user.discount.percentage) / 100)
-  }
-  return price
-}
-
-const subtotal = computed(() =>
-  selectedMenus.value.reduce(
-    (sum, menu) => sum + menu.price * quantities.value[menu.id],
-    0
-  )
-)
-
-const totalAmount = computed(() =>
-  selectedMenus.value.reduce(
-    (sum, menu) =>
-      sum + discountedPrice(menu.price) * quantities.value[menu.id],
-    0
-  )
-)
-
+const subtotal = computed(() => selectedMenus.value.reduce((sum, menu) => sum + menu.price * quantities.value[menu.id], 0))
+const totalAmount = computed(() => selectedMenus.value.reduce((sum, menu) => sum + discountedPrice(menu.price) * quantities.value[menu.id], 0))
 const discountSaved = computed(() => subtotal.value - totalAmount.value)
 
-const showToast = (message) => {
-  toastMessage.value = message
-  setTimeout(() => (toastMessage.value = ''), 3000)
-}
+const increment = id => quantities.value[id] = (quantities.value[id] || 0) + 1
+const decrement = id => { if (quantities.value[id] > 0) quantities.value[id] -= 1 }
 
+const showToast = msg => { toastMessage.value = msg; setTimeout(() => toastMessage.value = '', 3000) }
+
+const form = useForm({ orders: [], total: 0 })
 const submitOrder = () => {
   const ordersToSubmit = Object.entries(quantities.value)
     .filter(([_, qty]) => qty > 0)
-    .map(([menu_id, quantity]) => {
-      const menu = menus.find((m) => m.id === parseInt(menu_id))
-      return {
-        menu_id: parseInt(menu_id),
-        quantity,
-        original_price: menu.price,
-        discounted_price: discountedPrice(menu.price),
-      }
-    })
+    .map(([menu_id, quantity]) => ({ menu_id: parseInt(menu_id), quantity }))
 
   if (!ordersToSubmit.length) return
 
@@ -267,26 +217,14 @@ const submitOrder = () => {
   form.total = totalAmount.value
 
   form.post(route('orders.store'), {
-    onFinish: () => (isSubmitting.value = false),
-    onSuccess: () => {
-      quantities.value = {}
-      isCheckoutOpen.value = false
-      showToast('✅ Order placed successfully!')
-    },
-    onError: () => {
-      showToast('❌ Failed to place order. Try again.')
-    },
+    onFinish: () => isSubmitting.value = false,
+    onSuccess: () => { quantities.value = {}; isCheckoutOpen.value = false; showToast('✅ Order placed successfully!') },
+    onError: () => showToast('❌ Failed to place order. Try again.')
   })
 }
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.4s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.4s }
+.fade-enter-from, .fade-leave-to { opacity: 0 }
 </style>

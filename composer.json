@@ -65,7 +65,9 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ]
+        ],
+        "test:mytests": "./vendor/bin/pest tests/Feature/MyTests"
+
     },
     "extra": {
         "laravel": {

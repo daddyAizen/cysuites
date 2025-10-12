@@ -1,22 +1,21 @@
 <?php
 
 namespace Database\Factories;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Guest;
 
 class GuestFactory extends Factory
 {
-    protected $model = Guest::class;
+    protected $model = \App\Models\Guest::class;
 
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'room_name' => $this->faker->word(),
-            'room_code' => $this->faker->unique()->numerify('RM###'),
-            'password' => bcrypt('password'), 
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'room_name' => 'Ex',  
+            'room_code' => 'RM' . $this->faker->numberBetween(100, 999),
+            'password' => bcrypt('password'),
         ];
     }
 }
+

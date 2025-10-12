@@ -68,12 +68,19 @@ const deleteReservation = (id) => {
   <AppLayout title="Reservations">
     <Head title="Reservations" />
 
+    <template #header>
+            <h2
+                class="font-semibold text-xl text-gray-800 dark:text-white leading-tight"
+            >
+                Reservations
+            </h2>
+        </template>
+
     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold dark:text-white">Reservations</h2>
         <Dialog>
           <DialogTrigger as-child>
-            <Button class="bg-indigo-600 hover:bg-indigo-700">+ Add Reservation</Button>
+            <Button class=" hover:bg-indigo-700">+ Add Reservation</Button>
           </DialogTrigger>
           <DialogContent class="max-w-md">
             <DialogHeader>

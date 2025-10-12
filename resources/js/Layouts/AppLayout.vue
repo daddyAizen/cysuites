@@ -76,6 +76,9 @@ const logout = () => {
                 <NavLink v-if="userRole === 'Admin' || userRole === 'Staff' || userRole === 'Kitchen Staff'" :href="route('menu.staff')" :active="route().current('menu.staff')">
                   Staff Menu
                 </NavLink>
+                <NavLink v-if="userRole === 'Admin' || userRole === 'Staff' || userRole === 'Kitchen Staff'" :href="route('promotions.index')" :active="route().current('promotions.index')">
+                  Promotions
+                </NavLink>
               </div>
             </div>
 

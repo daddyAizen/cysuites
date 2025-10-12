@@ -1,21 +1,18 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\GuestAuthController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TableController;
-use App\Http\Controllers\AdminDashboardController;
-
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-use App\Http\Controllers\PromotionController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +52,6 @@ Route::prefix('guests')->group(function () {
     });
 });
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
@@ -69,7 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
     Route::get('/staff/menu', [MenuController::class, 'staffMenu'])->name('menu.staff');
 
-Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
+    Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
     Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
 
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
@@ -99,6 +95,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/orders/{order}', [OrderController::class, 'removeItem'])->name('orders.destroy');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
 
 });

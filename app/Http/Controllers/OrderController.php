@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Discount;
 use Inertia\Inertia;
@@ -23,38 +24,44 @@ class OrderController extends Controller
         ]);
     }
 
-    public function guestMenu()
-    {
-        $guest = auth('guest')->user();
+   public function guestMenu()
+{
+    $guest = auth('guest')->user();
 
-        if (!$guest) {
-            return redirect()->route('guests.login');
-        }
-
-        $menus = Menu::all();
-
-        return Inertia::render('Guests/Menu', [
-            'guest' => $guest,
-            'menus' => $menus,
-        ]);
+    if (!$guest) {
+        return redirect()->route('guests.login');
     }
+
+    $menus = Menu::all();
+
+    $user = auth()->user();
+    if ($user) {
+        $user->load('discount');
+    }
+
+    return Inertia::render('Guests/Menu', [
+        'guest' => $guest,
+        'menus' => $menus,
+        'user' => $user,
+    ]);
+}
+
 
 public function store(Request $request)
 {
-    $user = auth()->user();
+    $user = auth()->user()->load('discount');
     $guest = auth('guest')->user();
+
 
     $userId = $user ? $user->id : null;
     $guestId = $guest ? $guest->id : null;
 
-    // Validate request structure
     $validated = $request->validate([
         'orders' => 'required|array|min:1',
         'orders.*.menu_id' => 'required|exists:menus,id',
         'orders.*.quantity' => 'required|integer|min:1',
     ]);
 
-    // Create the order
     $order = Order::create([
         'guest_id' => $guestId,
         'user_id' => $guestId ? null : $userId,
@@ -64,38 +71,34 @@ public function store(Request $request)
 
     $total = 0;
 
-    // Calculate total and attach items
-    foreach ($validated['orders'] as $item) {
-        $menu = Menu::find($item['menu_id']);
-        if ($menu) {
-            $subtotal = $menu->price * $item['quantity'];
-            $total += $subtotal;
+foreach ($validated['orders'] as $item) {
+    $menu = Menu::find($item['menu_id']);
+    if ($menu) {
+        $subtotal = $menu->price * $item['quantity'];
+        $total += $subtotal;
 
-            $order->orderItems()->create([
-                'menu_id' => $menu->id,
-                'quantity' => $item['quantity'],
-            ]);
-        }
+        $order->orderItems()->create([
+            'menu_id' => $menu->id,
+            'quantity' => $item['quantity'],
+        ]);
     }
+}
 
-    // Apply discount only if user has one
-    $discountAmount = 0;
-    if ($user && $user->discount) {
-        $discount = $user->discount->percentage;
-        $discountAmount = ($discount / 100) * $total;
-        $total -= $discountAmount;
-    }
+$discountAmount = 0;
+if ($user && $user->discount) {
+    $discount = $user->discount->percentage;
+    $discountAmount = ($discount / 100) * $total;
+    $total -= $discountAmount;
+}
 
-    $order->update(['total' => $total]);
+$order->update(['total' => $total]);
 
-    // Notify user or guest
     if ($order->user) {
         $order->user->notify(new OrderStatusUpdated($order, 'none', 'pending'));
     } elseif ($order->guest) {
         $order->guest->notify(new OrderStatusUpdated($order, 'none', 'pending'));
     }
 
-    // Return a response Inertia can handle for your alert
     return back()->with('success', '✅ Order placed successfully!');
 }
 
