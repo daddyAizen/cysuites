@@ -67,4 +67,13 @@ class MenuController extends Controller
 
         return redirect()->back()->with('success', 'Menu stock status updated.');
     }
+
+    public function staffMenu()
+{
+    $menus = Menu::where('is_out_of_stock', false)->get();
+
+    return Inertia::render('Menu/StaffMenu', [
+        'menus' => $menus,
+    ]);
+}
 }

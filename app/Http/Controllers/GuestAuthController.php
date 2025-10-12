@@ -34,14 +34,13 @@ class GuestAuthController extends Controller
     }
 
     $guest = Guest::where('room_id', $room->id)->first();
-
     if (! $guest) {
         return back()->withErrors(['room_name' => 'No guest found for this room.']);
     }
 
     Auth::guard('guest')->login($guest);
 
-    return redirect()->route('guests.dashboard');
+    return redirect()->route('guests.dashboard',);
 }
 
     public function logout(Request $request)
@@ -50,6 +49,6 @@ class GuestAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('guests.login.form');
+        return redirect()->route('guests.login');
     }
 }

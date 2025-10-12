@@ -13,12 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
        $this->call([
             RoleSeeder::class,
             RoomSeeder::class,
             GuestSeeder::class,
             TableSeeder::class,
+            DiscountSeeder::class,
         ]);
 
         User::factory()->create([
@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             'employee_id' => 'CY001',
             'role_id' => 1,
             'password' => bcrypt('password'),
+            'discount_id' => 1
         ]);
     }
 }

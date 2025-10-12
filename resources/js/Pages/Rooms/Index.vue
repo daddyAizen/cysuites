@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 
 const toggleRoom = (roomId) => {
     Inertia.post(
-        route("rooms.toggleBooking", roomId),
+        route("rooms.toggle", roomId),
         {},
         {
             preserveScroll: true,
@@ -62,7 +62,6 @@ const submit = () => {
                 <div
                     class="bg-white dark:bg-neutral-900 shadow-sm sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-neutral-800"
                 >
-                    <!-- Header -->
                     <div class="flex justify-between items-center">
                         <h3
                             class="text-lg font-semibold text-gray-900 dark:text-white"
@@ -119,7 +118,6 @@ const submit = () => {
                         </Dialog>
                     </div>
 
-                    <!-- Grid of Rooms -->
                     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                         <div
                             v-for="room in rooms"

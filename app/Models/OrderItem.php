@@ -20,5 +20,17 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Menu::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function($item) {
+            $item->order->updateTotal();
+        });
+
+        static::deleted(function($item) {
+            $item->order->updateTotal();
+        });
+    }
 }
+
 

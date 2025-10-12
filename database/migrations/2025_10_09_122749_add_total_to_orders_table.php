@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('discounts', function (Blueprint $table) {
-            $table->id();
-            $table->string('name'); 
-            $table->integer('percentage');
-            $table->timestamps();
+        Schema::table('orders', function (Blueprint $table) {
+            $table->decimal('total', 10, 2)->default(0); // total amount of order
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('discounts');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('total');
+        });
     }
 };

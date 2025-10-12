@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import NavLink from "@/Components/NavLink.vue";
+
+
+const props = defineProps({
+    guest: Object,
+});
 </script>
 
 <template>
@@ -63,7 +68,9 @@ import NavLink from "@/Components/NavLink.vue";
                                             class="font-semibold text-sm text-gray-800 dark:text-neutral-300"
                                         >
                                             Order now
+
                                         </h3>
+                                        <p>{{ guest }}</p>
                                         <p
                                             class="mt-1 text-sm text-gray-500 dark:text-neutral-500"
                                         >

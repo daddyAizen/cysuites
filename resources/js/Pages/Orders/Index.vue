@@ -1,98 +1,196 @@
-<template>
-    <AppLayout title="Menu Management">
-        <Head title="Menu Management" />
-
-        <template #header>
-            <div class="flex justify-between items-center">
-                <h2
-                    class="font-semibold text-2xl text-gray-900 dark:text-white leading-tight"
-                >
-                    Menu Management
-                </h2>
-            </div>
-        </template>
-        <div class="max-w-6xl mx-auto py-10 px-4">
-            <div v-if="orders.length" class="space-y-6">
-                <div
-                    v-for="order in orders"
-                    :key="order.id"
-                    class="bg-white shadow-md rounded-2xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-lg transition"
-                >
-                    <div class="flex flex-col gap-2">
-                        <div class="text-gray-700 font-semibold">
-                            Guest: {{ order.guest.name }} (Room:
-                            {{ order.guest.room_number }})
-                        </div>
-                        <div class="flex flex-wrap gap-2 mt-1">
-                            <div
-                                v-for="item in order.order_items"
-                                :key="item.id"
-                                class="flex items-center gap-2 border border-gray-200 rounded-lg p-2 bg-gray-50"
-                            >
-                                <img
-                                    v-if="item.menu.picture"
-                                    :src="`/storage/${item.menu.picture}`"
-                                    class="h-10 w-10 object-cover rounded"
-                                />
-                                <div>
-                                    <div class="font-medium">
-                                        {{ item.menu.name }}
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        Qty: {{ item.quantity }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4 mt-4 md:mt-0">
-                        <span
-                            :class="
-                                order.status === 'approved'
-                                    ? 'text-green-600 font-bold'
-                                    : 'text-yellow-600 font-semibold'
-                            "
-                        >
-                            {{ order.status.toUpperCase() }}
-                        </span>
-                        <button
-                            v-if="order.status === 'pending'"
-                            @click="approveOrder(order.id)"
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
-                        >
-                            Approve
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div v-else class="text-center text-gray-500 text-lg mt-10">
-                No orders at the moment.
-            </div>
-        </div>
-    </AppLayout>
-</template>
-
 <script setup>
-import { ref } from "vue";
-import { usePage, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import { Head } from "@inertiajs/vue3";
+import { ref } from "vue";
 
-const orders = ref(usePage().props.orders || []);
+// ShadCN components
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Eye } from "lucide-vue-next";
 
-const approveOrder = (orderId) => {
-    router.post(
-        route("orders.approve", orderId),
-        {},
-        {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                const order = orders.value.find((o) => o.id === orderId);
-                if (order) order.status = "approved";
-            },
-        }
-    );
+import { router } from "@inertiajs/vue3";
+
+const props = defineProps({
+  orders: Object,
+});
+
+const isModalOpen = ref(false);
+const activeOrderImages = ref([]);
+const activeOrderIndex = ref(0);
+
+function openImages(order) {
+  activeOrderImages.value = (order.orderItems || [])
+    .map((item) => item.menu?.picture)
+    .filter(Boolean);
+
+  if (activeOrderImages.value.length) {
+    isModalOpen.value = true;
+    activeOrderIndex.value = 0;
+  } else {
+    alert("No images for this order");
+  }
+}
+
+function nextImage() {
+  if (activeOrderIndex.value < activeOrderImages.value.length - 1) {
+    activeOrderIndex.value++;
+  } else {
+    activeOrderIndex.value = 0;
+  }
+}
+
+function getStatusColor(status) {
+  switch (status) {
+    case "pending": return "bg-yellow-100 text-yellow-800";
+    case "approved": return "bg-blue-100 text-blue-800";
+    case "accepted": return "bg-green-100 text-green-800";
+    case "rejected": return "bg-red-100 text-red-800";
+    default: return "bg-gray-100 text-gray-800";
+  }
+}
+
+const updateStatus = (orderId) => {
+  router.post(route("orders.updateStatus", orderId), {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      const order = props.orders.data.find((o) => o.id === orderId);
+      if (!order) return;
+      if (order.status === "pending") order.status = "approved";
+      else if (order.status === "approved") order.status = "accepted";
+    },
+  });
+};
+
+const rejectOrder = (orderId) => {
+  router.delete(route("orders.destroy", orderId), {}, {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      const order = props.orders.data.find((o) => o.id === orderId);
+      if (order) order.status = "rejected";
+    },
+  });
 };
 </script>
+
+<template>
+  <AppLayout title="Orders">
+    <Head title="Orders" />
+
+    <template #header>
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">Orders</h2>
+    </template>
+
+    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <Card class="p-6 space-y-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">All Orders</h3>
+
+        <div class="rounded-md border border-gray-200 dark:border-neutral-800 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow class="bg-gray-50 dark:bg-neutral-800">
+                <TableHead class="w-12 text-left">#</TableHead>
+                <TableHead>Guest/User</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              <TableRow
+                v-for="(order, index) in props.orders.data"
+                :key="order.id"
+                class="hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
+              >
+                <TableCell>{{ index + 1 }}</TableCell>
+                <TableCell>{{ order.guest ? order.guest.name : order.user ? order.user.name : 'N/A' }}</TableCell>
+                <TableCell>
+                  <span :class="`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`">
+                    {{ order.status }}
+                  </span>
+                </TableCell>
+                <TableCell>${{ order.total.toFixed(2) }}</TableCell>
+                <TableCell>
+                  <Button size="sm" variant="outline" @click="openImages(order)">
+                    <Eye class="w-5 h-5" />
+                  </Button>
+                </TableCell>
+                <TableCell class="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    :disabled="order.status === 'accepted'"
+                    @click="updateStatus(order.id)"
+                  >
+                    {{ order.status === 'pending' ? 'Approve' : 'Accept' }}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    v-if="order.status !== 'accepted' && order.status !== 'rejected'"
+                    @click="rejectOrder(order.id)"
+                  >
+                    Reject
+                  </Button>
+                </TableCell>
+              </TableRow>
+
+              <TableRow v-if="props.orders.data.length === 0">
+                <TableCell colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-400">
+                  No orders found.
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center gap-3">
+          <Button
+            variant="outline"
+            :disabled="!props.orders.prev_page_url"
+            @click="$inertia.get(props.orders.prev_page_url)"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            :disabled="!props.orders.next_page_url"
+            @click="$inertia.get(props.orders.next_page_url)"
+          >
+            Next
+          </Button>
+        </div>
+      </Card>
+    </div>
+
+    <!-- Modal for images -->
+    <Dialog v-model="isModalOpen">
+      <DialogContent class="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Order Items</DialogTitle>
+          <DialogClose />
+        </DialogHeader>
+        <div class="relative">
+          <img
+            v-if="activeOrderImages.length"
+            :src="`/storage/${activeOrderImages[activeOrderIndex]}`"
+            class="w-full h-64 object-cover rounded-md"
+          />
+          <button
+            v-if="activeOrderImages.length > 1"
+            @click="nextImage"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white px-3 py-1 rounded-full"
+          >
+            Next
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </AppLayout>
+</template>

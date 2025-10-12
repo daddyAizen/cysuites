@@ -1,12 +1,17 @@
 <template>
-  <GuestLayout>
+  <AppLayout>
     <div class="max-w-6xl mx-auto py-10 px-4">
       <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">
-        Today's Menu
+        Staff Menu
+        <p>Discount: {{ user?.discount?.percentage ?? 0 }}%</p>
+
       </h2>
 
       <!-- Menu Grid -->
-      <div v-if="menus.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div
+        v-if="menus.length"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
         <div
           v-for="menu in menus"
           :key="menu.id"
@@ -22,14 +27,24 @@
             <span
               class="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full"
             >
-              KES {{ menu.price }}
+              KES {{ discountedPrice(menu.price) }}
             </span>
           </div>
 
           <div class="p-4 flex flex-col justify-between">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ menu.name }}</h3>
-              <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ menu.description }}</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                {{ menu.name }}
+              </h3>
+              <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+                {{ menu.description }}
+              </p>
+              <p
+                v-if="user.discount"
+                class="text-xs text-green-700 font-medium italic"
+              >
+                {{ user.discount.name }} ({{ user.discount.percentage }}% off)
+              </p>
             </div>
 
             <div class="flex items-center justify-between mt-auto">
@@ -40,7 +55,9 @@
                 >
                   −
                 </button>
-                <span class="text-lg font-medium text-gray-800 w-6 text-center">
+                <span
+                  class="text-lg font-medium text-gray-800 w-6 text-center"
+                >
                   {{ quantities[menu.id] || 0 }}
                 </span>
                 <button
@@ -69,7 +86,9 @@
           <span class="font-semibold mr-3">
             🛒 {{ cartItemCount }} item{{ cartItemCount > 1 ? 's' : '' }}
           </span>
-          <button class="bg-white text-green-700 font-bold px-4 py-1 rounded-full">
+          <button
+            class="bg-white text-green-700 font-bold px-4 py-1 rounded-full"
+          >
             Checkout
           </button>
         </div>
@@ -79,7 +98,9 @@
       <Dialog v-model:open="isCheckoutOpen">
         <DialogContent class="max-w-lg rounded-2xl shadow-lg bg-white p-6">
           <DialogHeader>
-            <DialogTitle class="text-2xl font-semibold text-gray-800">Checkout</DialogTitle>
+            <DialogTitle class="text-2xl font-semibold text-gray-800">
+              Checkout
+            </DialogTitle>
           </DialogHeader>
 
           <div class="space-y-4 mt-4">
@@ -96,17 +117,39 @@
               <div class="flex-1">
                 <p class="font-medium text-gray-800">{{ menu.name }}</p>
                 <p class="text-sm text-gray-600">
-                  {{ quantities[menu.id] }} × KES {{ menu.price }}
+                  {{ quantities[menu.id] }} ×
+                  <span
+                    class="line-through text-gray-400"
+                    v-if="user.discount"
+                    >KES {{ menu.price }}</span
+                  >
+                  <span class="ml-1 text-green-700 font-semibold"
+                    >KES {{ discountedPrice(menu.price) }}</span
+                  >
                 </p>
               </div>
               <p class="font-semibold text-gray-700">
-                KES {{ menu.price * quantities[menu.id] }}
+                KES
+                {{
+                  discountedPrice(menu.price) * quantities[menu.id]
+                }}
               </p>
             </div>
 
-            <div class="flex justify-between items-center pt-3">
+            <div v-if="user.discount" class="pt-3 border-t mt-3">
+              <p class="text-sm text-green-700 font-medium">
+                Discount ({{ user.discount.percentage }}% Off)
+              </p>
+              <p class="text-xs text-gray-600">
+                You saved KES {{ discountSaved }}
+              </p>
+            </div>
+
+            <div class="flex justify-between items-center pt-3 border-t mt-3">
               <span class="font-semibold text-gray-800 text-lg">Total:</span>
-              <span class="font-bold text-green-700 text-xl">KES {{ totalAmount }}</span>
+              <span class="font-bold text-green-700 text-xl"
+                >KES {{ totalAmount }}</span
+              >
             </div>
           </div>
 
@@ -127,21 +170,12 @@
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <!-- Toast -->
-      <Transition name="fade">
-        <div
-          v-if="showToast"
-          class="fixed bottom-10 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg text-sm"
-        >
-        </div>
-      </Transition>
     </div>
-  </GuestLayout>
+  </AppLayout>
 </template>
 
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import {
@@ -154,13 +188,13 @@ import {
 
 const page = usePage()
 const menus = page.props.menus || []
+const user = page.props.auth.user || {}
 
 const quantities = ref({})
 const isSubmitting = ref(false)
 const isCheckoutOpen = ref(false)
-const showToast = ref(false)
 
-const form = useForm({ orders: [] })
+const form = useForm({ orders: [], total: 0 })
 
 const increment = (id) => (quantities.value[id] = (quantities.value[id] || 0) + 1)
 const decrement = (id) => {
@@ -175,36 +209,55 @@ const selectedMenus = computed(() =>
   menus.filter((menu) => quantities.value[menu.id] > 0)
 )
 
-const totalAmount = computed(() =>
+const discountedPrice = (price) => {
+  if (user.discount && user.discount.percentage) {
+    return Math.round(price - (price * user.discount.percentage) / 100)
+  }
+  return price
+}
+
+const subtotal = computed(() =>
   selectedMenus.value.reduce(
     (sum, menu) => sum + menu.price * quantities.value[menu.id],
     0
   )
 )
 
+const totalAmount = computed(() =>
+  selectedMenus.value.reduce(
+    (sum, menu) =>
+      sum + discountedPrice(menu.price) * quantities.value[menu.id],
+    0
+  )
+)
+
+const discountSaved = computed(() => subtotal.value - totalAmount.value)
+
 const submitOrder = () => {
   const ordersToSubmit = Object.entries(quantities.value)
     .filter(([_, qty]) => qty > 0)
-    .map(([menu_id, quantity]) => ({
-      menu_id: parseInt(menu_id),
-      quantity,
-    }))
+    .map(([menu_id, quantity]) => {
+      const menu = menus.find((m) => m.id === parseInt(menu_id))
+      return {
+        menu_id: parseInt(menu_id),
+        quantity,
+        original_price: menu.price,
+        discounted_price: discountedPrice(menu.price),
+      }
+    })
 
   if (!ordersToSubmit.length) return
 
   isSubmitting.value = true
-
   form.orders = ordersToSubmit
-  form.post(route('guests.orders.store'), {
+  form.total = totalAmount.value
+
+  form.post(route('orders.store'), {
     onFinish: () => (isSubmitting.value = false),
     onSuccess: () => {
       quantities.value = {}
       isCheckoutOpen.value = false
-      showToast.value = true
-      setTimeout(() => (showToast.value = false), 2500)
     },
   })
 }
-
-
 </script>
