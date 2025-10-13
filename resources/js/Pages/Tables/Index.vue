@@ -4,12 +4,12 @@ import { Head, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Badge } from "@/Components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 
 const props = defineProps({
     tables: Array,
@@ -111,7 +111,7 @@ const remove = (tableId) => {
           </CardHeader>
 
           <CardContent class="p-4 flex-1 flex flex-col justify-between">
-      
+
 
             <div class="flex flex-col sm:flex-row gap-2 mt-4">
               <Button size="sm" variant="secondary" class="flex-1" @click="startEdit(table)">
