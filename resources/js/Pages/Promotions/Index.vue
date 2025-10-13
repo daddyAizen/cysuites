@@ -77,9 +77,16 @@ const submit = () => {
       <!-- Header -->
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-semibold tracking-tight">Promotions</h1>
-        <Button @click="openCreate">+ Add Promotion</Button>
+        <Button class="bg-blue-600 text-white hover:bg-blue-700" @click="openCreate">+ Add Promotion</Button>
       </div>
 
+         <div class="max-w-[85rem] mx-auto my-8 aspect-w-16 aspect-h-7">
+                <img
+                    class="w-full max-h-[30vh] object-cover rounded-xl"
+                    src="https://images.pexels.com/photos/5872364/pexels-photo-5872364.jpeg"
+                    alt="Features Image"
+                />
+            </div>
       <!-- Promotions Table -->
       <div class="rounded-xl border bg-card text-card-foreground shadow overflow-x-auto">
         <table class="w-full border-collapse min-w-[700px]">

@@ -38,6 +38,7 @@ const submitReservation = () => {
   form.post(route("reservations.store"), {
     onSuccess: () => {
       form.reset("table_id", "reservation_date", "reservation_time");
+      alert("Reservation successful!");
     },
   });
 };
@@ -56,9 +57,10 @@ const cancelReservation = (id) => {
     <Head title="My Reservations" />
 
     <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-16 px-4">
+
       <div class="max-w-6xl mx-auto space-y-16">
         <!-- Reservation Form -->
-        <Card class="max-w-2xl mx-auto shadow-xl border-gray-200">
+        <Card class="mt-3 max-w-7xl mx-auto shadow-xl border-gray-200">
           <CardHeader class="text-center space-y-2">
             <CardTitle class="text-3xl font-extrabold text-gray-800">
               Book a Table 🍽️
@@ -68,7 +70,15 @@ const cancelReservation = (id) => {
             </p>
           </CardHeader>
 
-          <CardContent class="space-y-6">
+            <div class="max-w-[85rem] mx-auto aspect-w-16 aspect-h-7">
+                <img
+                    class=" mx-auto h-[50vh] object-cover "
+                    src="https://cysuites.com/assets/images/the_hive_rest.jpeg"
+                    alt="Features Image"
+                />
+            </div>
+
+          <CardContent class="space-y-6 mt-2">
             <!-- Table Select -->
             <div class="space-y-2">
               <Label class="text-gray-700 font-medium">Select Table</Label>
@@ -128,13 +138,13 @@ const cancelReservation = (id) => {
           </CardContent>
 
           <CardFooter>
-            <Button
-              class="w-full text-lg font-semibold"
+            <button
+              class="w-full text-lg font-semibold bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition"
               :disabled="form.processing"
               @click="submitReservation"
             >
               {{ form.processing ? "Submitting..." : "Reserve Table" }}
-            </Button>
+            </button>
           </CardFooter>
         </Card>
 
@@ -165,7 +175,7 @@ const cancelReservation = (id) => {
                     : r.status === 'cancelled'
                     ? 'destructive'
                     : 'secondary'"
-                  class="capitalize"
+                  class="capitalize "
                 >
                   {{ r.status }}
                 </Badge>
@@ -179,7 +189,7 @@ const cancelReservation = (id) => {
                   v-if="r.status !== 'cancelled' && r.status !== 'completed'"
                   variant="destructive"
                   size="sm"
-                  class="w-full"
+                  class="w-full bg-red-600 text-white hover:bg-red-700"
                   @click="cancelReservation(r.id)"
                 >
                   Cancel Reservation

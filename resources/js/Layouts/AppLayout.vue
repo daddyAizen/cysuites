@@ -49,6 +49,11 @@ const logout = () => {
                   Dashboard
                 </NavLink>
 
+                 <NavLink v-if="userRole === 'Admin'" :href="route('guests.index')" :active="route().current('guests')">
+                   Guests
+                </NavLink>
+
+
                 <NavLink v-if="userRole === 'Admin'" :href="route('staff.index')" :active="route().current('staff')">
                   Staff
                 </NavLink>

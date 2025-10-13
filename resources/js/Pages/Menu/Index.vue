@@ -94,12 +94,14 @@ const toggleStock = (menuId) => {
                     Menu Management
                 </h2>
 
+
+
                 <!-- Add Menu Dialog -->
                 <Dialog>
                     <DialogTrigger as-child>
-                        <Button size="lg" class="font-medium">
+                        <button size="lg" class="font-medium bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
                             + Add Menu Item
-                        </Button>
+                        </button>
                     </DialogTrigger>
                     <DialogContent class="sm:max-w-lg p-6 rounded-2xl">
                         <DialogHeader>
@@ -171,17 +173,17 @@ const toggleStock = (menuId) => {
                                 </p>
                             </div>
 
-                            <Button
+                            <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="w-full font-semibold"
+                                class="w-full font-semibold bg-indigo-600 text-white py-3 rounded-md hover:bg-indigo-700 transition"
                             >
                                 {{
                                     form.processing
                                         ? "Adding..."
                                         : "Add Menu Item"
                                 }}
-                            </Button>
+                            </button>
                         </form>
                     </DialogContent>
                 </Dialog>
@@ -196,7 +198,7 @@ const toggleStock = (menuId) => {
                 <Card
                     v-for="menu in menus"
                     :key="menu.id"
-                    class="flex flex-col h-full overflow-hidden border border-gray-200 dark:border-neutral-800 shadow-sm hover:shadow-lg transition-shadow duration-200 rounded-2xl"
+                    class="flex flex-col h-full overflow-hidden border border-gray-200 dark:border-neutral-800 shadow-sm hover:shadow-lg transition-shadow duration-200 rounded-md"
                 >
                     <!-- Image container -->
                     <div
@@ -222,8 +224,8 @@ const toggleStock = (menuId) => {
                         <Badge
                             :class="
                                 menu.is_out_of_stock
-                                    ? 'bg-red-600 text-white px-3 py-1 rounded-full text-sm'
-                                    : 'bg-green-600 text-white px-3 py-1 rounded-full text-sm'
+                                    ? 'bg-red-600 text-white px-3 py-1 rounded-md text-sm'
+                                    : 'bg-green-600 text-white px-3 py-1 rounded-md text-sm'
                             "
                         >
                             {{
@@ -255,14 +257,14 @@ const toggleStock = (menuId) => {
                             <Button
                                 size="sm"
                                 variant="secondary"
-                                class="flex-1"
+                                class="flex-1 bg-white text-black border hover:bg-blue-700"
                                 @click="startEdit(menu)"
                             >
                                 Edit
                             </Button>
                             <Button
                                 size="sm"
-                                class="flex-1"
+                                class="flex-1 bg-black text-white hover:bg-red-700"
                                 :variant="
                                     menu.is_out_of_stock
                                         ? 'default'
@@ -296,7 +298,7 @@ const toggleStock = (menuId) => {
             :open="!!editForm.id"
             @update:open="(val) => !val && (editForm.id = null)"
         >
-            <DialogContent class="sm:max-w-lg p-6 rounded-2xl">
+            <DialogContent class="sm:max-w-lg p-6 rounded-xl">
                 <DialogHeader>
                     <DialogTitle
                         class="text-lg font-semibold text-gray-900 dark:text-white"

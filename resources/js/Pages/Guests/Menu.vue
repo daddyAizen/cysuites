@@ -10,7 +10,7 @@
         <div
           v-for="menu in menus"
           :key="menu.id"
-          class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition relative"
+          class="bg-white rounded-md shadow-md overflow-hidden hover:shadow-xl transition relative"
         >
           <div class="relative">
             <img
@@ -20,7 +20,7 @@
               class="h-44 w-full object-cover"
             />
             <span
-              class="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full"
+              class="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-xl"
             >
               KES {{ menu.price }}
             </span>
@@ -202,6 +202,7 @@ const submitOrder = () => {
       isCheckoutOpen.value = false
       showToast.value = true
       setTimeout(() => (showToast.value = false), 2500)
+      alert('Order placed successfully!')
     },
   })
 }

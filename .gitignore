@@ -21,4 +21,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-
+Dockerfile
+docker-compose.yml
+nginx/default.conf

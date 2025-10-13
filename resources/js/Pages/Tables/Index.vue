@@ -64,10 +64,12 @@ const remove = (tableId) => {
           Table Management
         </h2>
 
+
+
         <!-- Add Table Dialog -->
         <Dialog>
           <DialogTrigger as-child>
-            <Button size="lg">+ Add Table</Button>
+            <Button class="bg-blue-600 px-2 text-white hover:bg-blue-700" size="lg">+ Add Table</Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-md p-6 rounded-2xl">
             <DialogHeader>
@@ -96,8 +98,16 @@ const remove = (tableId) => {
           </DialogContent>
         </Dialog>
       </div>
+
     </template>
 
+    <div class="max-w-[85rem] mx-auto my-8 aspect-w-16 aspect-h-7">
+                <img
+                    class="w-full max-h-[30vh] object-cover rounded-xl"
+                    src="https://cysuites.com/assets/images/the_hive_rest.jpeg"
+                    alt="Features Image"
+                />
+            </div>
     <div class="py-10 max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div v-if="tables.length" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card v-for="table in tables" :key="table.id" class="border rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col">
@@ -114,10 +124,10 @@ const remove = (tableId) => {
 
 
             <div class="flex flex-col sm:flex-row gap-2 mt-4">
-              <Button size="sm" variant="secondary" class="flex-1" @click="startEdit(table)">
+              <Button size="sm" variant="secondary" class="flex-1 bg-white text-black border hover:bg-blue-700" @click="startEdit(table)">
                 Edit
               </Button>
-              <Button size="sm" variant="destructive" class="flex-1" @click="remove(table.id)">
+              <Button size="sm" variant="destructive" class="flex-1 bg-neutral-800 text-white hover:bg-red-700" @click="remove(table.id)">
                 Delete
               </Button>
             </div>

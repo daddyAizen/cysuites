@@ -35,9 +35,9 @@ class OrderController extends Controller
     $menus = Menu::all();
 
     $user = auth()->user();
-    if ($user) {
-        $user->load('discount');
-    }
+    // if ($user) {
+    //     $user->load('discount');
+    // }
 
     return Inertia::render('Guests/Menu', [
         'guest' => $guest,
@@ -49,7 +49,7 @@ class OrderController extends Controller
 
 public function store(Request $request)
 {
-    $user = auth()->user()->load('discount');
+    $user = auth()->user();
     $guest = auth('guest')->user();
 
 
@@ -99,7 +99,7 @@ $order->update(['total' => $total]);
         $order->guest->notify(new OrderStatusUpdated($order, 'none', 'pending'));
     }
 
-    return back()->with('success', '✅ Order placed successfully!');
+    return back()->with('success', 'Order placed successfully!');
 }
 
 

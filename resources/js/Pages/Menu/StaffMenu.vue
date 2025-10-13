@@ -13,7 +13,7 @@
         <div
           v-for="menu in menus"
           :key="menu.id"
-          class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition relative"
+          class="bg-white rounded-md shadow-md overflow-hidden hover:shadow-xl transition relative"
         >
           <img
             v-if="menu.picture"
@@ -71,7 +71,7 @@
       <transition name="fade">
         <div
           v-if="cartItemCount > 0"
-          class="fixed bottom-6 right-6 bg-green-600 text-white rounded-full shadow-lg flex items-center px-6 py-3 cursor-pointer hover:bg-green-700 transition"
+          class="z-20 fixed bottom-6 right-6 bg-green-600 text-white rounded-full shadow-lg flex items-center px-6 py-3 cursor-pointer hover:bg-green-700 transition"
           @click="isCheckoutOpen = true"
         >
           <span class="font-semibold mr-3">

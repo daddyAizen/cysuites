@@ -50,7 +50,7 @@ const submit = () => {
 
             <Dialog>
               <DialogTrigger as-child>
-                <Button>Add Staff</Button>
+                <Button class="bg-indigo-600 text-white hover:bg-indigo-700">Add Staff</Button>
               </DialogTrigger>
 
               <DialogContent class="sm:max-w-[425px]">
@@ -99,6 +99,13 @@ const submit = () => {
               </DialogContent>
             </Dialog>
           </div>
+<div class="max-w-[77rem] mx-auto my-8 aspect-w-16 aspect-h-7">
+                <img
+                    class="w-full max-h-[30vh] object-cover rounded-xl"
+                    src="https://images.unsplash.com/photo-1641122669951-3e2aff778d3b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3RhZmZ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=900"
+                    alt="Features Image"
+                />
+            </div>
 
           <!-- Table -->
           <div class="rounded-md border border-gray-200 dark:border-neutral-800 overflow-hidden">
