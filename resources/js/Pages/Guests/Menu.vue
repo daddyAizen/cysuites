@@ -150,7 +150,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
+} from '@/Components/ui/dialog'
 
 const page = usePage()
 const menus = page.props.menus || []
