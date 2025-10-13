@@ -3,12 +3,11 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { ref } from "vue";
 
-// ShadCN Components
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Components/ui/table";
 import { Card } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/Components/ui/dialog";
-import { Eye } from "lucide-vue-next";
+import { Accessibility, Eye } from "lucide-vue-next";
 
 import { router } from "@inertiajs/vue3";
 
@@ -21,11 +20,14 @@ const activeOrderImages = ref([]);
 const activeOrderIndex = ref(0);
 
 function openImages(order) {
-  activeOrderImages.value = (order.orderItems || [])
-    .map((item) => item.menu?.picture)
-    .filter(Boolean);
+    console.log(order.order_items.length);
+  activeOrderImages.value = (order.order_items || [])
+    .map((item) => item.menu)
+     .filter((menu) => menu && menu.picture);
+console.log(activeOrderImages.value);
 
   if (activeOrderImages.value.length) {
+
     isModalOpen.value = true;
     activeOrderIndex.value = 0;
   } else {
@@ -123,6 +125,7 @@ const rejectOrder = (orderId) => {
                 <TableCell class="flex gap-2">
                   <Button
                     size="sm"
+                    class="bg-blue-600 text-white hover:bg-blue-700"
                     variant="outline"
                     :disabled="order.status === 'accepted'"
                     @click="updateStatus(order.id)"
@@ -132,6 +135,7 @@ const rejectOrder = (orderId) => {
                   <Button
                     size="sm"
                     variant="destructive"
+                    class="bg-red-600 text-white hover:bg-red-700"
                     v-if="order.status !== 'accepted' && order.status !== 'rejected'"
                     @click="rejectOrder(order.id)"
                   >
@@ -170,16 +174,18 @@ const rejectOrder = (orderId) => {
     </div>
 
     <!-- Modal for images -->
-    <Dialog v-model="isModalOpen">
+    <Dialog :open="isModalOpen" @update:open="isModalOpen = $event"
+>
       <DialogContent class="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Order Items</DialogTitle>
+          <DialogTitle>Order Items ({{ activeOrderImages.length }})</DialogTitle>
           <DialogClose />
         </DialogHeader>
         <div class="relative">
+
           <img
             v-if="activeOrderImages.length"
-            :src="`/storage/${activeOrderImages[activeOrderIndex]}`"
+            :src="activeOrderImages[activeOrderIndex].picture_url"
             class="w-full h-64 object-cover rounded-md"
           />
           <button

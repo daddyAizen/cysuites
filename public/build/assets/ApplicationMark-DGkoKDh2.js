@@ -1,0 +1,1 @@
+import{_ as s}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{e as o,o as t}from"./app-vtqjdjmy.js";const c={},e={class:"h-8 w-auto",src:"https://cysuites.com/assets/icons/cysuites_logo.png",alt:""};function r(n,a){return t(),o("img",e)}const p=s(c,[["render",r]]);export{p as A};
