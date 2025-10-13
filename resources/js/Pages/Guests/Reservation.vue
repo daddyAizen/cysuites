@@ -9,7 +9,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/Components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import {
@@ -18,8 +18,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from "@/Components/ui/select";
+import { Badge } from "@/Components/ui/badge";
 
 const props = defineProps({
   guest: Object,
