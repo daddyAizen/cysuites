@@ -27,3 +27,8 @@ RUN composer install --optimize-autoloader --no-dev
 EXPOSE 9000
 
 CMD ["php-fpm"]
+
+
+
+
+

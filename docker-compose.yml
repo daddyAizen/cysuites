@@ -6,8 +6,6 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
-      - ./storage:/var/www/html/storage
-      - ./bootstrap/cache:/var/www/html/bootstrap/cache
     ports:
       - "5173:5173"
     depends_on:
