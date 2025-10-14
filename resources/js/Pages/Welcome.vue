@@ -273,7 +273,65 @@ function handleImageError() {
             </div>
         </div>
     </div>
+    <!-- FAQ -->
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <!-- Title -->
+  <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
+    <h2 class="text-2xl font-bold md:text-3xl md:leading-tight text-gray-800 dark:text-neutral-200">
+      Frequently Asked Questions
+    </h2>
+  </div>
+  <!-- End Title -->
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Grid -->
+    <div class="grid sm:grid-cols-2 gap-6 md:gap-12">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">
+          Do you offer free gym service to your guests
+        </h3>
+        <p class="mt-2 text-gray-600 dark:text-neutral-400">
+          Yes, we offer complimentary gym services to all our guests.
+        </p>
+      </div>
+      <!-- End Col -->
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">
+          Can we order takeout?
+        </h3>
+        <p class="mt-2 text-gray-600 dark:text-neutral-400">
+          Yes, we offer takeout services for all our walk-in and in-house guests as well.
+        </p>
+      </div>
+      <!-- End Col -->
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">
+          What days are your offers and promotions?
+        </h3>
+        <p class="mt-2 text-gray-600 dark:text-neutral-400">
+         Our offers and promotions are available often times throughout the week, with special deals on weekends.
+        </p>
+      </div>
+      <!-- End Col -->
+
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-neutral-200">
+          How much is the pricing
+        </h3>
+        <p class="mt-2 text-gray-600 dark:text-neutral-400">
+          kindly contact the admin at admin@cysuites.com
+        </p>
+      </div>
+      <!-- End Col -->
+    </div>
+    <!-- End Grid -->
+  </div>
+</div>
+<!-- End FAQ -->
     <footer class="relative overflow-hidden bg-neutral-900">
+
         <svg
             class="absolute -bottom-20 start-1/2 w-[1900px] transform -translate-x-1/2"
             width="2745"
@@ -379,6 +437,9 @@ function handleImageError() {
                         <p class="text-sm text-neutral-400">
                             Cysuites Apartment & Hotel
                         </p>
+                        <NavLink :href="route('login')" class="mt-4 text-sm text-neutral-400">
+                            Staff
+                        </NavLink>
                     </div>
                 </div>
             </div>

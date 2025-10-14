@@ -49,6 +49,6 @@ class GuestAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('guests.login');
+        return redirect()->route('welcome');
     }
 }

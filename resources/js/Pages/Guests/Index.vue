@@ -28,10 +28,13 @@ const submit = () => {
 };
 
 const checkoutGuest = (guestId) => {
-  Inertia.post(route("guests.checkout", guestId), {}, {
-    preserveScroll: true,
-  });
+  if (confirm("Are you sure you want to check out this guest?")) {
+    Inertia.post(route("guests.checkout", guestId), {}, {
+      preserveScroll: true,
+    });
+  }
 };
+
 </script>
 
 <template>
@@ -48,7 +51,6 @@ const checkoutGuest = (guestId) => {
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-neutral-900 shadow-sm sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-neutral-800">
 
-          <!-- Header Row -->
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Guests</h3>
 

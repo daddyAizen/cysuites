@@ -27,7 +27,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('welcome');
 
 Route::prefix('guests')->group(function () {
     Route::get('/login', [GuestAuthController::class, 'showLoginForm'])->name('guest.login.form');
@@ -48,7 +48,6 @@ Route::prefix('guests')->group(function () {
         Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
         Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 
-        Route::post('/{id}/checkout', [GuestController::class, 'checkout'])->name('guests.checkout');
     });
 });
 
@@ -83,6 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/menu/{menu}/toggle-stock', [MenuController::class, 'toggleStock'])->name('menu.toggleStock');
 
     Route::resource('guests', GuestController::class)->only(['index', 'store']);
+    Route::post('/{id}/checkout', [GuestController::class, 'checkout'])->name('guests.checkout');
+
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

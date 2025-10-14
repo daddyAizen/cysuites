@@ -11,7 +11,7 @@ class StaffController extends Controller
 {
     public function index()
     {
-        $users = User::with('role')->get();
+        $users = User::with('role')->paginate(10);
         $roles = Role::all();
 
         return Inertia::render('Staff/Index', [
