@@ -1,1 +1,0 @@
-import{c as t,w as a,a as e,g as o,l as r,o as c}from"./app-vtqjdjmy.js";const u={__name:"AuthenticationCardLogo",setup(n){return(l,s)=>(c(),t(o(r),{href:"/"},{default:a(()=>[...s[0]||(s[0]=[e("img",{class:"h-30",src:"https://cysuites.com/assets/icons/cysuites_logo.png",alt:""},null,-1)])]),_:1}))}};export{u as _};
