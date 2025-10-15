@@ -72,7 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/rooms/toggle/{room}', [RoomController::class, 'toggle'])->name('rooms.toggle');
 
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-    Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::post('/reservations', [ReservationController::class, 'store'])->name('admin.reservations.store');
     Route::post('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
     Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'destroy'])->name('reservations.cancel');
 

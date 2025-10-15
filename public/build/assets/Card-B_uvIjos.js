@@ -1,0 +1,1 @@
+import{c as a}from"./utils-DYeITWNS.js";import{e as o,r as n,n as t,g as c,o as l}from"./app-DD0hfv4c.js";const u={__name:"Card",props:{class:{type:null,required:!1}},setup(r){const s=r;return(e,d)=>(l(),o("div",{class:t(c(a)("rounded-lg border bg-card text-card-foreground shadow-sm",s.class))},[n(e.$slots,"default")],2))}};export{u as _};

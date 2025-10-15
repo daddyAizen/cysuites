@@ -39,7 +39,7 @@ const editForm = useForm({
 const showEditModal = ref(false);
 
 const submit = () => {
-    form.post(route("reservations.store"), {
+    form.post(route("admin.reservations.store"), {
         onSuccess: () => form.reset(),
     });
 };
